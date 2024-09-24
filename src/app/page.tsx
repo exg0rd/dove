@@ -10,5 +10,6 @@ export default function Home() {
         <main className={cn(roboto.className, "mx-auto max-w-[1280px] min-h-screen")}>
             <Header />
         </main>
+        
     );
 }

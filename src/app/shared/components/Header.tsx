@@ -1,10 +1,14 @@
-import React from "react";
+'use client'
+
+import React, { useRef } from "react";
 
 import { Logo } from "./Logo";
-import { Button } from "./Button";
-
+import { Button } from "@/components/ui/button";
 import { Bungee } from "next/font/google";
 import { cn } from "../lib/utils";
+import { LogInIcon } from "lucide-react";
+import { LoginForm } from "./LoginForm";
+import { Modal } from "./Modal";
 
 const bungeeFont = Bungee({
     weight: "400",
@@ -12,6 +16,19 @@ const bungeeFont = Bungee({
 });
 
 export const Header: React.FC = () => {
+
+    const loginFormRef = useRef<HTMLDivElement>(null);
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+    function handleLoginButtonClick() {
+        setIsModalOpen(true);
+    }
+
+    function closeModal() {
+        setIsModalOpen(false);
+    }
+
+
     return (
         <header>
             <div className="flex justify-between mt-5 mx-2 items-center">
@@ -29,19 +46,20 @@ export const Header: React.FC = () => {
                     </div>
                 </div>
                 <div>
-                    <Button variant={"primary"} className="font-extrabold tracking-wider text-pink-300 text-lg">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            height="24px"
-                            viewBox="0 -960 960 960"
-                            width="24px"
-                            fill="#f9a8d4">
-                            <path d="M480-120v-80h280v-560H480v-80h280q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H480Zm-80-160-55-58 102-102H120v-80h327L345-622l55-58 200 200-200 200Z" />
-                        </svg>
-                        Войти
+                    <Button
+                        variant={"default"}
+                        className="font-extrabold"
+                        onClick={handleLoginButtonClick}>
+                        <>
+                            <LogInIcon/>
+                             Войти
+                        </>
                     </Button>
                 </div>
             </div>
+            <Modal isOpen={isModalOpen} onClose={closeModal}>
+                <LoginForm ref={loginFormRef} />
+            </Modal>
         </header>
     );
 };
