@@ -2,10 +2,7 @@ import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
-
-interface Props {
-    className?: string;
-}
+import Link from "next/link";
 
 export const LoginForm: React.FC = () => {
     return (
@@ -23,8 +20,9 @@ export const LoginForm: React.FC = () => {
                         name="email"
                         type="email"
                         autoComplete="email"
+                        placeholder="Электронная почта"
                         required
-                        className="bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                       className="bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-pink-400 focus:border-pink-500 block w-full p-2.5"
                     />
                 </div>
                 <div>
@@ -38,8 +36,9 @@ export const LoginForm: React.FC = () => {
                         name="password"
                         type="password"
                         autoComplete="current-password"
+                        placeholder="Пароль"
                         required
-                        className="bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        className="bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-pink-400 focus:border-pink-500 block w-full p-2.5"
                     />
                 </div>
                 <Button
@@ -50,7 +49,7 @@ export const LoginForm: React.FC = () => {
                 <Button
                     variant={"ghost"}
                     className="mx-3 text-pink-700 font-bold">
-                    Создать аккаунт
+                    <Link href="/signup">Создать аккаунт</Link>
                 </Button>
             </form>
         </>

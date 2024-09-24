@@ -17,7 +17,7 @@ export const Logo: React.FC<Props> = ({ className, iconSize }) => (
     <div
     className={cn(
         bungeeFont.className,
-        "flex items-center gap-4"
+        "flex flex-wrap items-center gap-4"
     )}>
    <div className={className}>
         <svg

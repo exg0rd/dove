@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import LoginLayout from "./layout";
+import AuthFormLayout from "./layout";
 import { LoginForm } from "../shared/components/LoginForm";
 
 interface PageProps {
@@ -8,9 +8,9 @@ interface PageProps {
 
 const LoginPage: React.FC<PageProps> = ({ children }) => {
     return (
-        <LoginLayout>
+        <AuthFormLayout>
             <LoginForm />
-        </LoginLayout>
+        </AuthFormLayout>
     );
 };
 
