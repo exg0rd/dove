@@ -1,51 +1,37 @@
+"use client";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
 import Link from "next/link";
+import { AuthFormInput } from "./AuthFormInput";
+import { useFormState, useFormStatus } from "react-dom";
+import { login } from "@/app/api/auth";
+import { Spinner } from "./Spinner";
+import { SubmitButton } from "./SubmitButton";
 
 export const LoginForm: React.FC = () => {
+    const [state, action] = useFormState(login, undefined);
+
     return (
         <>
-          <Logo iconSize="64" className="my-8"/>
-            <form className="space-y-6">
-                <div>
-                    <label
-                        htmlFor="email"
-                        className="block mb-2 text-lg font-extrabold text-pink-700">
-                        Электронная почта
-                    </label>
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        placeholder="Электронная почта"
-                        required
-                       className="bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-pink-400 focus:border-pink-500 block w-full p-2.5"
-                    />
-                </div>
-                <div>
-                    <label
-                        htmlFor="password"
-                        className="block mb-2 text-lg font-extrabold text-pink-700">
-                        Пароль
-                    </label>
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        autoComplete="current-password"
-                        placeholder="Пароль"
-                        required
-                        className="bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-pink-400 focus:border-pink-500 block w-full p-2.5"
-                    />
-                </div>
-                <Button
-                    variant={"default"}
-                    className="bg-pink-700 font-bold">
-                    Войти
-                </Button>
+            <Logo
+                iconSize="64"
+                className="my-8"
+            />
+            <form className="space-y-6" method="POST" action={action}>
+                <AuthFormInput
+                    type="username"
+                    description="Имя пользователя"
+                    errorDescription={state?.errors?.username}
+                />
+                <AuthFormInput
+                    type="password"
+                    description="Пароль"
+                    errorDescription={state?.errors?.password}
+                    successDescription={state?.message}
+                />
+                <SubmitButton className="bg-pink-700 text-sm">Войти</SubmitButton>
                 <Button
                     variant={"ghost"}
                     className="mx-3 text-pink-700 font-bold">

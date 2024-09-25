@@ -11,7 +11,7 @@ interface Props {
     iconSize?: string;
 }
 
-import { cn } from "@/lib/utils";
+import { cn } from "../../../lib/utils";
 
 export const Logo: React.FC<Props> = ({ className, iconSize }) => (
     <div

@@ -23,13 +23,25 @@ export const SignupFormSchema = z.object({
     path: ["repeatPassword"], 
 });
 
+export const LoginFormSchema = z.object({
+    username: z
+        .string()
+        .min(6, {
+            message: "Имя пользователя должно содержать минимум 6 символов",
+        })
+        .trim(),
+    password: z
+        .string()
+        .trim(),
+});
+
 export type FormState =
     | {
           errors?: {
-              username?: string[];
-              email?: string[];
-              password?: string[];
-              repeatPassword?: string[];
+              username?: string[] | string;
+              email?: string[] | string;
+              password?: string[] | string;
+              repeatPassword?: string[] | string;
           };
           message?: string;
       }
