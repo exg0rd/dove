@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
 import { useFormState, useFormStatus } from 'react-dom'
-import { signup } from "@/app/actions/auth";
+import { signup } from "@/app/api/auth";
 
 export const SignupForm: React.FC = () => {
     // reuse inputs maybe as components?
