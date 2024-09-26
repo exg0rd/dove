@@ -7,7 +7,6 @@ import Link from "next/link";
 import { AuthFormInput } from "./AuthFormInput";
 import { useFormState, useFormStatus } from "react-dom";
 import { login } from "@/app/api/auth";
-import { Spinner } from "./Spinner";
 import { SubmitButton } from "./SubmitButton";
 
 export const LoginForm: React.FC = () => {

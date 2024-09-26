@@ -1,12 +1,10 @@
 "use client";
 import React from "react";
 
-import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { signup } from "@/app/api/auth";
 import { AuthFormInput } from "./AuthFormInput";
-import { Spinner } from "./Spinner";
 import { SubmitButton } from "./SubmitButton";
 
 export const SignupForm: React.FC = () => {
