@@ -1,16 +1,48 @@
 "use client";
 import React from "react";
+import { FormEvent } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
 import Link from "next/link";
 import { AuthFormInput } from "./AuthFormInput";
-import { useFormState, useFormStatus } from "react-dom";
-import { login } from "@/app/api/auth";
 import { SubmitButton } from "./SubmitButton";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { loginValidate } from "@/app/validation/auth";
 
 export const LoginForm: React.FC = () => {
-    const [state, action] = useFormState(login, undefined);
+    const [formErrors, setFormErrors] = useState<any>({});
+
+    const router = useRouter();
+
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        event?.preventDefault();
+        const formData = new FormData(event?.currentTarget);
+
+        const { username, password, errors } = loginValidate(formData);
+
+        if (errors) {
+            setFormErrors(errors);
+            return;
+        }
+
+        const response = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+        });
+
+        if (response.ok) {
+            router.push("/profile");
+        } else {
+            const errorData = await response.json();
+            setFormErrors({
+                ...formErrors,
+                username: errorData.errors
+            });
+        }
+    }
 
     return (
         <>
@@ -18,17 +50,15 @@ export const LoginForm: React.FC = () => {
                 iconSize="64"
                 className="my-8"
             />
-            <form className="space-y-6" method="POST" action={action}>
+            <form className="space-y-6" method="POST" onSubmit={handleSubmit}>
                 <AuthFormInput
                     type="username"
                     description="Имя пользователя"
-                    errorDescription={state?.errors?.username}
+                    errorDescription={formErrors.username}
                 />
                 <AuthFormInput
                     type="password"
                     description="Пароль"
-                    errorDescription={state?.errors?.password}
-                    successDescription={state?.message}
                 />
                 <SubmitButton className="bg-pink-700 text-sm">Войти</SubmitButton>
                 <Button
