@@ -1,5 +1,6 @@
 "use server";
 
+import { loginSessionSet } from "@/app/actions/actions";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
@@ -7,6 +8,7 @@ import { NextResponse } from "next/server";
 const prisma = new PrismaClient();
 
 export async function POST(req: any, res: any) {
+
     if (req.method === "POST") {
         const body = await req.json();
         const { username, password } = body;
@@ -20,6 +22,7 @@ export async function POST(req: any, res: any) {
             existingUser &&
             (await bcrypt.compare(password, existingUser.password))
         ) {
+            const session = await loginSessionSet(existingUser);
             return NextResponse.json({ username: username }, { status: 200 });
         } else {
             return NextResponse.json(

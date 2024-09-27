@@ -1,23 +1,26 @@
 "use client";
 import React from "react";
-import { FormEvent } from "react";
+
+import { useState, FormEvent, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { loginValidate } from "@/app/validation/auth";
 
 import { Button } from "@/components/ui/button";
 import { Logo } from "./Logo";
 import Link from "next/link";
 import { AuthFormInput } from "./AuthFormInput";
 import { SubmitButton } from "./SubmitButton";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { loginValidate } from "@/app/validation/auth";
 
 export const LoginForm: React.FC = () => {
-    const [formErrors, setFormErrors] = useState<any>({});
 
     const router = useRouter();
+    
+    const [formErrors, setFormErrors] = useState<any>({});
+    const [loading, setLoading] = useState(false);
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event?.preventDefault();
+        setLoading(true);
         const formData = new FormData(event?.currentTarget);
 
         const { username, password, errors } = loginValidate(formData);
@@ -34,7 +37,8 @@ export const LoginForm: React.FC = () => {
         });
 
         if (response.ok) {
-            router.push("/profile");
+            setLoading(false);
+            router.push('/profile');
         } else {
             const errorData = await response.json();
             setFormErrors({

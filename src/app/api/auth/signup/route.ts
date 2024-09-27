@@ -4,6 +4,7 @@ import { NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { NextResponse } from 'next/server';
+import { loginSessionSet } from '@/app/actions/actions';
 
 const prisma = new PrismaClient()
 
@@ -14,7 +15,6 @@ export async function POST(req: any, res: any) {
         const data = await req.json();
 
         const { username, email, password } = data;
-        console.log([username, email, password]);
 
         try {
             const existingUser = await prisma.user.findFirst({
@@ -38,11 +38,10 @@ export async function POST(req: any, res: any) {
                 }
             })
 
+            const session = await loginSessionSet(newUser);
             return NextResponse.json({username: username}, { status: 200});
     
         } catch (error) {
-            console.log(error);
-            console.log(password);
             return NextResponse.json({errors: 'Имя или почта уже используется.'}, { status: 401});
         }
     

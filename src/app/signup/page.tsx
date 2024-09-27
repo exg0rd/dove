@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import AuthFormLayout from "../login/layout"; // cursed
+import { AuthFormLayout } from "../login/layout"; // cursed
 import { SignupForm } from "../shared/components/SignupForm";
 
 interface PageProps {

@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
 
 import { useRouter } from "next/navigation";
 
@@ -10,9 +10,10 @@ import { SubmitButton } from "./SubmitButton";
 import { signupValidate } from "@/app/validation/auth";
 
 export const SignupForm: React.FC = () => {
-    const [formErrors, setFormErrors] = useState<any>({});
 
     const router = useRouter();
+
+    const [formErrors, setFormErrors] = useState<any>({});
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event?.preventDefault();
@@ -32,7 +33,7 @@ export const SignupForm: React.FC = () => {
         });
 
         if (response.ok) {
-            router.push("/profile");
+            router.push('/profile');
         } else {
             const errorData = await response.json();
             setFormErrors({

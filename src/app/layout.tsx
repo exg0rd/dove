@@ -4,7 +4,7 @@ import { Roboto } from "next/font/google";
 
 const roboto = Roboto({ weight: ["300"], subsets: ["cyrillic"] });
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 
 export default function RootLayout({
     children,
