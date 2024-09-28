@@ -23,11 +23,11 @@ export const HomeContent: React.FC = () => {
                         *Подойдет для работы, учёбы и личной жизни!
                     </p>
                 </div>
-                <div className="w-full lg:w-1/2 px-4 mb-8 lg:mb-0 hidden lg:block rounded-full">
+                <div className="w-full lg:w-1/2 px-4 mb-8 lg:mb-0 hidden lg:flex rounded-full items-center">
                     <img
                         src="/images/home.jpg"
                         alt="Example Image"
-                        className=""></img>
+                        className="object-contain"></img>
                 </div>
             </div>
         </div>
