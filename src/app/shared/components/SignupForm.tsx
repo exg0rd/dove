@@ -14,10 +14,20 @@ export const SignupForm: React.FC = () => {
     const router = useRouter();
 
     const [formErrors, setFormErrors] = useState<any>({});
+    const [loading, setLoading] = useState(false);
+
+    function handleServerResponse(errorData) {
+        setLoading(false);
+        setFormErrors({
+            ...formErrors,
+            username: errorData.errors
+        });
+    }
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event?.preventDefault();
         const formData = new FormData(event?.currentTarget);
+        setLoading(true);
 
         const { username, email, password, errors } = signupValidate(formData);
 
@@ -36,10 +46,8 @@ export const SignupForm: React.FC = () => {
             router.push('/profile');
         } else {
             const errorData = await response.json();
-            setFormErrors({
-                ...formErrors,
-                email: errorData.errors
-            });
+            handleServerResponse(errorData);
+           
         }
     }
 
@@ -73,7 +81,7 @@ export const SignupForm: React.FC = () => {
                     description="Повторите пароль"
                     errorDescription={formErrors.repeatPassword}
                 />
-                <SubmitButton className="bg-pink-700 text-sm">
+                <SubmitButton loading={loading} className="bg-pink-700 text-sm">
                     Зарегистрироваться
                 </SubmitButton>
             </form>

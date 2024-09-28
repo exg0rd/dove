@@ -11,15 +11,14 @@ interface Props {
 }
 
 export const SubmitButton: React.FC<Props> = ({ className, children, loading }) => {
-    const [pending, setPending] = useState(loading);
 
     return (
         <Button
-            disabled={pending}
+            disabled={loading === true}
             type="submit"
             variant={"default"}
             className={className}>
-              {pending ? (
+              {loading ? (
                 <>
                     <Spinner />
                 </>

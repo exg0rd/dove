@@ -18,9 +18,17 @@ export const LoginForm: React.FC = () => {
     const [formErrors, setFormErrors] = useState<any>({});
     const [loading, setLoading] = useState(false);
 
+    function handleServerResponse(errorData) {
+        setLoading(false);
+        setFormErrors({
+            ...formErrors,
+            username: errorData.errors
+        });
+    }
+
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-        event?.preventDefault();
         setLoading(true);
+        event?.preventDefault();
         const formData = new FormData(event?.currentTarget);
 
         const { username, password, errors } = loginValidate(formData);
@@ -41,10 +49,7 @@ export const LoginForm: React.FC = () => {
             router.push('/profile');
         } else {
             const errorData = await response.json();
-            setFormErrors({
-                ...formErrors,
-                username: errorData.errors
-            });
+            handleServerResponse(errorData);
         }
     }
 
@@ -64,7 +69,7 @@ export const LoginForm: React.FC = () => {
                     type="password"
                     description="Пароль"
                 />
-                <SubmitButton className="bg-pink-700 text-sm">Войти</SubmitButton>
+                <SubmitButton loading={loading} className="bg-pink-700 text-sm">Войти</SubmitButton>
                 <Button
                     variant={"ghost"}
                     className="mx-3 text-pink-700 font-bold">

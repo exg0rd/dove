@@ -32,7 +32,7 @@ export function Header({username} : User)  {
                 <div>
                     <Button
                         variant={"default"}
-                        className="font-extrabold"
+                        className="font-medium"
                         onClick={username ? handleLogout : undefined}>
                         {!username ? (
                             <>
