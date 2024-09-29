@@ -14,4 +14,15 @@ model User {
   email String  @unique
   username  String @unique
   password String
+
+  todoTasks todoTask[]
+}
+
+model todoTask {
+  id String @id @default(cuid())
+  title String
+  description String
+  completed Boolean @default(false)
+  userId Int?
+  user User? @relation(fields: [userId], references: [id])
 }

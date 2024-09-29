@@ -10,20 +10,19 @@ import Link from "next/link";
 import { User } from "@/app/lib/definitions";
 import { useRouter } from "next/navigation";
 
-export function Header({username} : User)  {
-
+export function Header({ username }: User) {
     const router = useRouter();
 
-    async function handleLogout() { // shoud not be here
+    async function handleLogout() {
+        // shoud not be here
         fetch("/api/auth/logout", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username }),
         }).then((response) => {
-            if (response.ok) router.push('/');
+            if (response.ok) router.push("/");
         });
     }
-
 
     return (
         <header>
@@ -34,6 +33,7 @@ export function Header({username} : User)  {
                         variant={"default"}
                         className="font-medium"
                         onClick={username ? handleLogout : undefined}>
+                        <p>{username}</p>
                         {!username ? (
                             <>
                                 <LogInIcon />
@@ -42,7 +42,6 @@ export function Header({username} : User)  {
                         ) : (
                             <>
                                 <LogOutIcon />
-                                Выйти
                             </>
                         )}
                     </Button>
@@ -50,4 +49,4 @@ export function Header({username} : User)  {
             </div>
         </header>
     );
-};
+}

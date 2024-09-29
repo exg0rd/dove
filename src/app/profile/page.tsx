@@ -1,8 +1,8 @@
 import React from "react";
 import { ProfileLayout } from "./layout";
 import { Header } from "../shared/components/Header";
-import RootLayout from "../layout";
 import { getSession } from "../actions/actions";
+import { TodoList } from "../shared/components/TodoList";
 
 interface ProfileProps {
     children: React.ReactNode;
@@ -14,10 +14,10 @@ export async function Profile({ children }: ProfileProps) {
 
     return (
         <ProfileLayout>
-            <Header username={username} />
-            <h1 className="text-xl text-center mt-20">
-                Welcome back, {username}!
-            </h1>
+            <Header username={username}/>
+            <div className="grid grid-rows-2">
+                <TodoList></TodoList>
+            </div>
             {children}
         </ProfileLayout>
     );
