@@ -97,7 +97,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                     comforta.className,
                     "container mx-auto mt-5 px-4 py-12"
                 )}>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                     <h2 className="text-3xl font-extrabold mt-3">
                         Список задач
                     </h2>
