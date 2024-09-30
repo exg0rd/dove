@@ -13,51 +13,54 @@ import {
 import { comforta } from "@/app/layout";
 import { cn } from "@/app/lib/utils";
 import { TodoListTask } from "./TodoTask";
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, Plus, Save } from "lucide-react";
+import Carousel from "./Carousel";
 
 interface Props {
     className?: string;
     children?: React.ReactNode;
 }
 
+// task interface
+
 const MOCK_DATA = {
     tasks: [
         {
             className: "",
-            description: "Buy groceries",
-            name: "Grocery Shopping",
+            description: "Купить продукты",
+            name: "Покупка продуктов",
             order: 1,
             date: "2023-03-15T10:00:00.000Z",
             status: "finished",
         },
         {
             className: "",
-            description: "Prepare presentation slides",
-            name: "Project Presentation",
+            description: "Подготовить презентацию",
+            name: "Презентация проекта",
             order: 2,
             date: "2023-03-16T14:30:00.000Z",
             status: "not started",
         },
         {
             className: "",
-            description: "Call John about meeting",
-            name: "Follow-up Call",
+            description: "Позвонить Ивану по поводу встречи",
+            name: "Собеседование с Иваном",
             order: 3,
             date: "2023-03-17T09:00:00.000Z",
-            status: "in progress",
+            status: "progress",
         },
         {
             className: "",
-            description: "Review and respond to emails",
-            name: "Email Management",
+            description: "Просмотреть и ответить на письма",
+            name: "Управление электронной почтой",
             order: 4,
             date: "2023-03-18T08:00:00.000Z",
             status: "finished",
         },
         {
             className: "",
-            description: "Attend team meeting",
-            name: "Team Meeting",
+            description: "Принять участие в командной встрече",
+            name: "Командная встреча",
             order: 5,
             date: "2023-03-19T11:00:00.000Z",
             status: "finished",
@@ -65,15 +68,11 @@ const MOCK_DATA = {
     ],
 };
 
-const statusPriority: Record<> = {
-    "not started": 0,
-    "in progress": 1,
-    finished: 2,
-};
-
 export const TodoList: React.FC<Props> = ({ className }) => {
     const [isHidden, setIsHidden] = useState(false);
     const [scale, setScale] = useState(1);
+    const [statusFilter, setStatusFilter] = useState("not started");
+    const [todayDate, setTodayDate] = useState(new Date().toLocaleDateString('RU'))
     // tasks state and proper ... for tasks
 
     const handleToggleVisibility = () => {
@@ -95,12 +94,13 @@ export const TodoList: React.FC<Props> = ({ className }) => {
             <div
                 className={cn(
                     comforta.className,
-                    "container mx-auto mt-5 px-4 py-12"
+                    "container mx-auto md:mt-3 px-4 py-12"
                 )}>
                 <div className="flex justify-between items-center">
-                    <h2 className="text-3xl font-extrabold mt-3">
+                    <h2 className="text-xl font-extrabold">
                         Список задач
                     </h2>
+                    <p className="font-bold">{todayDate}</p>
                     <Button onClick={handleToggleVisibility}>
                         <MenuIcon />
                     </Button>
@@ -108,57 +108,55 @@ export const TodoList: React.FC<Props> = ({ className }) => {
 
                 <div
                     className={cn(
-                        "mt-5 p-3 min-h-[300px] flex flex-col round-xl shadow-lg",
+                        "mt-2 md:p-2 flex flex-col round-xl shadow-sm",
                         `animated-component ${isHidden ? "hidden" : ""}`
                     )}
                     style={{
                         transform: `scaleY(${scale})`,
                         transformOrigin: "top",
                     }}>
-                    <div className="flex justify-between">
-                        <Button className="rounded-full text-xl leading-loose">
-                            +
+                    <div className="flex">
+                        <Button className="rounded-full mr-1 mt-2">
+                            <Plus/>
                         </Button>
-                        <Select>
+                        <Button className="rounded-full mr-auto mt-2 text-lg">
+                            <Save/>
+                        </Button>
+                        <Select
+                            onValueChange={(value) => setStatusFilter(value)}
+                            defaultValue="not started">
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Фильтры" />
+                                <SelectValue placeholder="Статус" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="light">Light</SelectItem>
-                                <SelectItem value="dark">Dark</SelectItem>
-                                <SelectItem value="system">System</SelectItem>
+                                <SelectItem value="not started">
+                                    Предстоящие
+                                </SelectItem>
+                                <SelectItem value="progress">
+                                    В процессе
+                                </SelectItem>
+                                <SelectItem value="finished">
+                                    Завершенные
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="flex flex-col mt-3">
                         <ol>
                             {MOCK_DATA.tasks
-                                .sort(
-                                    (a, b) =>
-                                        statusPriority[a.status] -
-                                        statusPriority[b.status]
-                                )
-                                .map((task, index, sortedTasks) => {
-                                    const isLastInProgress =
-                                        task.status === "in progress" &&
-                                        (index === sortedTasks.length - 1 ||
-                                            sortedTasks[index + 1].status !==
-                                                "in progress");
-
-                                    return (
-                                        <React.Fragment key={task.name}>
-                                            <TodoListTask
-                                                className="rounded-lg gap-2 p-2 m-2"
-                                                name={task.name}
-                                                description={task.description}
-                                                order={task.order}
-                                                date={new Date(task.date)}
-                                                status={task.status}
-                                            />
-                                            {isLastInProgress && <hr className="my-3 border-t-4 border-green-600"/>}
-                                        </React.Fragment>
-                                    );
-                                })}
+                                .filter((task) => task.status === statusFilter)
+                                .map((task) => (
+                                    <React.Fragment key={task.name}>
+                                        <TodoListTask
+                                            className="rounded-lg gap-2 p-2 m-2"
+                                            name={task.name}
+                                            description={task.description}
+                                            order={task.order}
+                                            date={new Date(task.date)}
+                                            status={task.status}
+                                        />
+                                    </React.Fragment>
+                                ))}
                         </ol>
                     </div>
                 </div>

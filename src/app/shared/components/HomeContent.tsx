@@ -7,11 +7,11 @@ export const HomeContent: React.FC = () => {
     return (
         <div className={cn(comforta.className, "container mx-auto mt-10 px-4 py-12")}>
             <div className="flex flex-wrap lg:flex-nowrap justify-center items-center">
-                <div className="w-full lg:w-1/2 px-4 lg:pl-8">
-                    <h2 className="text-6xl font-extrabold leading-tight text-pink-900 mb-4">
+                <div className="w-full lg:w-1/2 sm:px-4 lg:pl-8">
+                    <h2 className="text-4xl md:text-6xl font-extrabold leading-tight text-pink-900 mb-4">
                         ИДЕАЛЬНЫЙ ПЛАНИРОВЩИК ДЛЯ ВАС
                     </h2>
-                    <p className="text-lg leading-loose text-pink-800 mb-6">
+                    <p className="text-md md:text-lg leading-loose text-pink-800 mb-6 text-balance">
                         Наша платформа создана специально для тех, кто стремится
                         к максимальной продуктивности и эффективности в работе.
                         Мы предлагаем удобный инструмент для управления

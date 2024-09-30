@@ -3,6 +3,7 @@ import { ProfileLayout } from "./layout";
 import { Header } from "../shared/components/Header";
 import { getSession } from "../actions/actions";
 import { TodoList } from "../shared/components/TodoList";
+import Carousel from "../shared/components/Carousel";
 
 interface ProfileProps {
     children: React.ReactNode;
@@ -15,8 +16,9 @@ export async function Profile({ children }: ProfileProps) {
     return (
         <ProfileLayout>
             <Header username={username}/>
-            <div className="grid grid-rows-2">
+            <div>
                 <TodoList></TodoList>
+                <Carousel/>
             </div>
             {children}
         </ProfileLayout>

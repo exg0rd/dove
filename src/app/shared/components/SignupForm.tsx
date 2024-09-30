@@ -47,7 +47,6 @@ export const SignupForm: React.FC = () => {
         } else {
             const errorData = await response.json();
             handleServerResponse(errorData);
-           
         }
     }
 
