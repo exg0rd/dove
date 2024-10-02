@@ -6,7 +6,7 @@ interface AuthFormLayoutProps {
 }
 
 import { comforta } from "../layout";
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 
 export const AuthFormLayout: React.FC<AuthFormLayoutProps> = ({ children }) => {
     return (

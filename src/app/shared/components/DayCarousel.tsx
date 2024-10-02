@@ -4,13 +4,40 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import React, { useState } from "react";
 
 import { comforta } from "@/app/layout";
-import { cn } from "@/app/lib/utils";
+import { cn } from "@/lib/utils";
+import { DailyTaskList } from "./DailyTaskList";
+
+
+const mockTasks: IDailyTaskProps[] = [
+    {
+        startTime: new Date('2023-10-01T09:00:00'),
+        endTime: new Date('2023-10-01T10:00:00'),
+        completed: true,
+        name: 'Спортзал',
+        description: 'Discuss project updates and next steps.',
+    },
+    {
+        startTime: new Date('2023-10-01T11:00:00'),
+        endTime: new Date('2023-10-01T12:00:00'),
+        completed: false,
+        name: 'Говнокод писать',
+        description: 'Review pull requests from team members.',
+    },
+    {
+        startTime: new Date('2023-10-01T13:00:00'),
+        endTime: new Date('2023-10-01T14:00:00'),
+        completed: false,
+        name: 'Стать боссом кфс',
+        description: 'Take a break and recharge.',
+    },
+];
+
 
 const Carousel = () => {
     const [currentWeekStart, setCurrentWeekStart] = useState(
         getStartOfWeek(new Date())
     );
-    const [currentDay, setCurrentDay] = useState(new Date().getDate())
+    const [currentDay, setCurrentDay] = useState(new Date().getDate());
 
     function getStartOfWeek(date) {
         const day = date.getUTCDay(); // Получаем день недели (0 - воскресенье, 1 - понедельник и т.д.)
@@ -63,19 +90,22 @@ const Carousel = () => {
                     <ArrowRight />
                 </Button>
             </div>
-            <div className="flex justify-between w-full text-sm">
+            <div className="grid grid-cols-7 gap-3 w-full font-semibold text-md text-center">
                 {daysInWeek.map((day) => (
                     <div
                         key={day.toISOString()}
-                        className={`flex flex-col items-center border-pink-300 border rounded-full px-3 py-4 sm:px-6 sm:py-8 ${
-                            day.getDate() === currentDay ? "bg-pink-300" : ""
+                        className={`border-pink-300 border rounded-lg px-3 py-4 sm:px-6 sm:py-8 ${
+                            day.getDate() === currentDay ? "bg-pink-100" : ""
                         }`}>
-                        <div className="font-semibold">
+                        <p>
                             {day.toLocaleString("ru-RU", { weekday: "short" })}
-                        </div>
-                        <div className="text-lg">{day.getDate()}</div>
+                        </p>
+                        <p className="">{day.getDate()}</p>
                     </div>
                 ))}
+                <div className="col-span-7 gap-3">
+                    <DailyTaskList tasks={mockTasks}/>
+                </div>
             </div>
         </div>
     );

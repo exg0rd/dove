@@ -39,6 +39,7 @@ export async function POST(req: any, res: any) {
             })
 
             const session = await loginSessionSet(newUser);
+            await prisma.$disconnect();
             return NextResponse.json({username: username}, { status: 200});
     
         } catch (error) {

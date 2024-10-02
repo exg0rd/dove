@@ -6,7 +6,7 @@ interface iTodoListTaskProps {
     description?: string;
     name: string;
     order: number;
-    date: Date;
+    time: string;
     type?: string;
     status: "not started" | "in progress" | "finished";
 }
@@ -16,11 +16,10 @@ export const TodoListTask: React.FC<iTodoListTaskProps> = ({
     description,
     name,
     order,
-    date,
+    time,
     status,
 }) => {
     // Combine the dynamic bg class with any existing classes
-
     return (
         <li>
             <div className={className}>
@@ -39,10 +38,7 @@ export const TodoListTask: React.FC<iTodoListTaskProps> = ({
                     </div>
                     <div className="ml-auto">
                         <p className="tabular-nums">
-                            {date.toLocaleTimeString("RU", {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                            })}
+                            {time}
                         </p>
                     </div>
                 </div>

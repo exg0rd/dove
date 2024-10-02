@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
     Select,
@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/select";
 
 import { comforta } from "@/app/layout";
-import { cn } from "@/app/lib/utils";
+import { cn } from "@/lib/utils";
 import { TodoListTask } from "./TodoTask";
 import { MenuIcon, Plus, Save } from "lucide-react";
-import Carousel from "./Carousel";
+import Modal from "./Modal";
+import { ToDoForm } from "./ToDoForm";
 
 interface Props {
     className?: string;
@@ -23,56 +24,40 @@ interface Props {
 
 // task interface
 
-const MOCK_DATA = {
-    tasks: [
-        {
-            className: "",
-            description: "Купить продукты",
-            name: "Покупка продуктов",
-            order: 1,
-            date: "2023-03-15T10:00:00.000Z",
-            status: "finished",
-        },
-        {
-            className: "",
-            description: "Подготовить презентацию",
-            name: "Презентация проекта",
-            order: 2,
-            date: "2023-03-16T14:30:00.000Z",
-            status: "not started",
-        },
-        {
-            className: "",
-            description: "Позвонить Ивану по поводу встречи",
-            name: "Собеседование с Иваном",
-            order: 3,
-            date: "2023-03-17T09:00:00.000Z",
-            status: "progress",
-        },
-        {
-            className: "",
-            description: "Просмотреть и ответить на письма",
-            name: "Управление электронной почтой",
-            order: 4,
-            date: "2023-03-18T08:00:00.000Z",
-            status: "finished",
-        },
-        {
-            className: "",
-            description: "Принять участие в командной встрече",
-            name: "Командная встреча",
-            order: 5,
-            date: "2023-03-19T11:00:00.000Z",
-            status: "finished",
-        },
-    ],
-};
-
 export const TodoList: React.FC<Props> = ({ className }) => {
     const [isHidden, setIsHidden] = useState(false);
     const [scale, setScale] = useState(1);
     const [statusFilter, setStatusFilter] = useState("not started");
-    const [todayDate, setTodayDate] = useState(new Date().toLocaleDateString('RU'))
+    const [openModal, setOpenModal] = useState(false);
+    const [toDoTasks, setToDoTasks] = useState([]);
+
+    useEffect(() => {
+        const fetchTodos = async () => {
+            try {
+                const response = await fetch("/api/todo/get", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: "",
+                });
+                if (!response.ok) {
+                    throw new Error(`ERROR status ${response.status}`);
+                }
+                const data = await response.json();
+                setToDoTasks(data.tasks);
+            } catch (error) {
+                console.log("ERROR FETCH", error);
+            }
+        };
+
+        fetchTodos();
+    }, []);
+
+    const todayDate = new Date().toLocaleString("ru-RU", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+
     // tasks state and proper ... for tasks
 
     const handleToggleVisibility = () => {
@@ -89,6 +74,36 @@ export const TodoList: React.FC<Props> = ({ className }) => {
         }
     };
 
+    const handleOpen = () => {
+        setOpenModal(!openModal);
+    };
+
+    const handleAddTask = async (newTask) => {
+        try {
+            const response = await fetch("/api/todo/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newTask),
+            });
+
+            if (response.ok) {
+                const addedTask = await response.json();
+                console.log(addedTask)
+                console.log(toDoTasks);
+                if (toDoTasks.length > 0) {
+                    setToDoTasks(prevTasks => [...prevTasks, addedTask.task]);
+                } else {
+                    setToDoTasks(addedTask);
+                }
+                return true;
+            } else {
+                throw new Error("Failed to add task");
+            }
+        } catch (error) {
+            console.error("Error adding task:", error);
+        }
+    };
+
     return (
         <div className={className}>
             <div
@@ -97,9 +112,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                     "container mx-auto md:mt-3 px-4 py-12"
                 )}>
                 <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-extrabold">
-                        Список задач
-                    </h2>
+                    <h2 className="text-xl font-extrabold">Список задач</h2>
                     <p className="font-bold">{todayDate}</p>
                     <Button onClick={handleToggleVisibility}>
                         <MenuIcon />
@@ -115,12 +128,14 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                         transform: `scaleY(${scale})`,
                         transformOrigin: "top",
                     }}>
-                    <div className="flex">
-                        <Button className="rounded-full mr-1 mt-2">
-                            <Plus/>
+                    <div className="flex items-center">
+                        <Button
+                            className="rounded-full mr-1 mt-2"
+                            onClick={handleOpen}>
+                            <Plus />
                         </Button>
                         <Button className="rounded-full mr-auto mt-2 text-lg">
-                            <Save/>
+                            <Save />
                         </Button>
                         <Select
                             onValueChange={(value) => setStatusFilter(value)}
@@ -143,24 +158,44 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                     </div>
                     <div className="flex flex-col mt-3">
                         <ol>
-                            {MOCK_DATA.tasks
-                                .filter((task) => task.status === statusFilter)
-                                .map((task) => (
-                                    <React.Fragment key={task.name}>
-                                        <TodoListTask
-                                            className="rounded-lg gap-2 p-2 m-2"
-                                            name={task.name}
-                                            description={task.description}
-                                            order={task.order}
-                                            date={new Date(task.date)}
-                                            status={task.status}
-                                        />
-                                    </React.Fragment>
-                                ))}
+                            {toDoTasks.length > 0 ? (
+                                toDoTasks
+                                    .filter(
+                                        (task) => task.status === statusFilter
+                                    )
+                                    .map((task) => {
+                                        return (
+                                            <React.Fragment key={task.name}>
+                                                <TodoListTask
+                                                    className="rounded-lg gap-2 p-2 m-2"
+                                                    name={task.name}
+                                                    description={
+                                                        task.description
+                                                    }
+                                                    order={task.order}
+                                                    time={task.time}
+                                                    status={task.status}
+                                                />
+                                            </React.Fragment>
+                                        );
+                                    })
+                            ) : (
+                                <p className="text-center">Пока нет задач</p>
+                            )}
                         </ol>
                     </div>
                 </div>
             </div>
+            <Modal
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+                title={"Новая задача"}
+                formName="todoform">
+                <ToDoForm
+                    formName="todoform"
+                    addTask={handleAddTask}
+                />
+            </Modal>
         </div>
     );
 };

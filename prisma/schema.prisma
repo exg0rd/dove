@@ -20,9 +20,10 @@ model User {
 
 model todoTask {
   id String @id @default(cuid())
-  title String
-  description String
-  completed Boolean @default(false)
+  name String
+  description String?
+  status String @default("not started")
   userId Int?
+  time String
   user User? @relation(fields: [userId], references: [id])
 }

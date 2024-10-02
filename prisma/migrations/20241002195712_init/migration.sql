@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "todoTask" ALTER COLUMN "description" DROP NOT NULL,
+ALTER COLUMN "time" SET DATA TYPE TEXT;

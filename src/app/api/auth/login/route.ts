@@ -23,6 +23,7 @@ export async function POST(req: any, res: any) {
             (await bcrypt.compare(password, existingUser.password))
         ) {
             const session = await loginSessionSet(existingUser);
+            await prisma.$disconnect();
             return NextResponse.json({ username: username }, { status: 200 });
         } else {
             return NextResponse.json(

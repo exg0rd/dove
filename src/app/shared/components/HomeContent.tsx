@@ -1,7 +1,7 @@
 "use server";
 
 import { comforta } from "@/app/layout";
-import { cn } from "@/app/lib/utils";
+import { cn } from "@/lib/utils";
 
 export const HomeContent: React.FC = () => {
     return (
