@@ -1,26 +1,27 @@
 "use client";
 import React, { FormEvent, useEffect, useState } from "react";
+import { handleAddTask } from "@/app/services/todo/service";
 
 interface Props {
     className?: string;
-    addTask: (arg0: any) => boolean;
+    setTasks: (arg0: any) => boolean;
     formName: string;
 }
 
-export const ToDoForm: React.FC<Props> = ({ addTask, formName }) => {
+export const ToDoForm: React.FC<Props> = ({ setTasks, formName }) => {
     // tasks should be updated on successfull response
-    const [description, setDescription] = useState(
-        localStorage.getItem("descriptiondraft") || ""
-    );
-    const [time, setTime] = useState(localStorage.getItem("timedraft") || "");
-    const [name, setName] = useState(localStorage.getItem("namedraft") || "");
+    const [formData, setFormData] = useState({
+        name: "" || localStorage.getItem("namedraft"),
+        description: "" || localStorage.getItem("descriptiondraft"),
+        time: "" || localStorage.getItem("timedraft"),
+    });
 
     useEffect(() => {
-        if (description && time) {
+        if (formData) {
             return () => {
-                localStorage.setItem("namedraft", name);
-                localStorage.setItem("descriptiondraft", description);
-                localStorage.setItem("timedraft", time);
+                localStorage.setItem("namedraft", formData.name);
+                localStorage.setItem("descriptiondraft", formData.description);
+                localStorage.setItem("timedraft", formData.time);
             };
         }
     });
@@ -29,31 +30,35 @@ export const ToDoForm: React.FC<Props> = ({ addTask, formName }) => {
         event.preventDefault();
 
         try {
-            const status = await addTask({ name, description, time });
-            if (status === true) {
+            const status = await handleAddTask({ formData });
+            if (status.success === true) {
                 localStorage.removeItem("namedraft");
                 localStorage.removeItem("descriptiondraft");
                 localStorage.removeItem("timedraft");
+
+                setTasks(prev => [...prev, status.addedTask.task])
             }
         } catch (error) {
             console.log(error);
         }
     };
 
-    const handleNameChange = (e) => {
-        setName(e.target.value);
-    };
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        const name = e.target.name;
 
-    const handleDescriptionChange = (e) => {
-        setDescription(e.target.value);
-    };
+        console.log(name, value)
 
-    const handleTimeChange = (e) => {
-        setTime(e.target.value);
+        setFormData({...formData, [name] : value })
+        console.log(formData)
     };
 
     return (
-        <form method="POST" onSubmit={handleSubmit} id={formName}>
+        <form
+            method="POST"
+            onSubmit={handleSubmit}
+            id={formName}
+            onChange={handleInputChange}>
             <div className="flex flex-col mt-5 p-3 gap-3">
                 <div>
                     <label
@@ -66,10 +71,9 @@ export const ToDoForm: React.FC<Props> = ({ addTask, formName }) => {
                         id="taskname"
                         name="name"
                         placeholder="Название задачи..."
-                        value={name}
+                        value={formData.name}
                         required
-                        className="bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-pink-400 focus:border-pink-500 block w-full p-2.5"
-                        onChange={handleNameChange}></input>
+                        className="bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-pink-400 focus:border-pink-500 block w-full p-2.5"></input>
                 </div>
                 <div>
                     <label
@@ -81,10 +85,8 @@ export const ToDoForm: React.FC<Props> = ({ addTask, formName }) => {
                         id="taskdescription"
                         name="description"
                         placeholder="Описание задачи..."
-                        value={description}
-                        required
-                        className="min-h-[150px] resize-none bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-pink-400 focus:border-pink-500 block w-full p-2.5"
-                        onChange={handleDescriptionChange}></textarea>
+                        value={formData.description}
+                        className="min-h-[150px] resize-none bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-pink-400 focus:border-pink-500 block w-full p-2.5"></textarea>
                 </div>
                 <div>
                     <label
@@ -97,10 +99,9 @@ export const ToDoForm: React.FC<Props> = ({ addTask, formName }) => {
                         type="time"
                         name="time"
                         placeholder="Время..."
-                        value={time}
+                        value={formData.time}
                         required
-                        className="bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-pink-400 focus:border-pink-500 block w-full p-2.5"
-                        onChange={handleTimeChange}></input>
+                        className="bg-gray-50 border border-pink-300 text-pink-900 text-sm rounded-lg focus:ring-pink-400 focus:border-pink-500 block w-full p-2.5"></input>
                 </div>
             </div>
         </form>

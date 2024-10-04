@@ -16,6 +16,10 @@ import { TodoListTask } from "./TodoTask";
 import { MenuIcon, Plus, Save } from "lucide-react";
 import Modal from "./Modal";
 import { ToDoForm } from "./ToDoForm";
+import {
+    handleApiDeleteTask,
+    handleCompleteTask,
+} from "@/app/services/todo/service";
 
 interface Props {
     className?: string;
@@ -24,14 +28,17 @@ interface Props {
 
 // task interface
 
+//!!! PROVIDE STORE SO YOU CAN ADD TASKS CLIENTSIDE, CHANGE STATUS AND DELETE FROM COMPLETED AND SEND IT IN ONE REQUEST !!!
+
 export const TodoList: React.FC<Props> = ({ className }) => {
     const [isHidden, setIsHidden] = useState(false);
     const [scale, setScale] = useState(1);
     const [statusFilter, setStatusFilter] = useState("not started");
     const [openModal, setOpenModal] = useState(false);
-    const [toDoTasks, setToDoTasks] = useState([]);
+    const [toDoTasks, setToDoTasks] = useState([]); // add memos
 
     useEffect(() => {
+        // вынести
         const fetchTodos = async () => {
             try {
                 const response = await fetch("/api/todo/get", {
@@ -58,7 +65,28 @@ export const TodoList: React.FC<Props> = ({ className }) => {
         year: "numeric",
     });
 
+    const handleMoveTask = async (id: string) => {
+        const response = await handleCompleteTask(id);
+        if (response.success === true) {
+            setToDoTasks((prevTasks) =>
+                prevTasks.map((task) =>
+                    task.id === id ? { ...task, status: "completed" } : task
+                )
+            );
+            // }
+        }
+    };
     // tasks state and proper ... for tasks
+
+    const handleDeleteTask = async (id: string) => {
+        const response = await handleApiDeleteTask(id);
+        if (response.success === true) {
+            setToDoTasks((prevTasks) =>
+                prevTasks.filter((task) => task.id !== id)
+            );
+            // }
+        }
+    };
 
     const handleToggleVisibility = () => {
         if (!isHidden) {
@@ -76,32 +104,6 @@ export const TodoList: React.FC<Props> = ({ className }) => {
 
     const handleOpen = () => {
         setOpenModal(!openModal);
-    };
-
-    const handleAddTask = async (newTask) => {
-        try {
-            const response = await fetch("/api/todo/add", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newTask),
-            });
-
-            if (response.ok) {
-                const addedTask = await response.json();
-                console.log(addedTask)
-                console.log(toDoTasks);
-                if (toDoTasks.length > 0) {
-                    setToDoTasks(prevTasks => [...prevTasks, addedTask.task]);
-                } else {
-                    setToDoTasks(addedTask);
-                }
-                return true;
-            } else {
-                throw new Error("Failed to add task");
-            }
-        } catch (error) {
-            console.error("Error adding task:", error);
-        }
     };
 
     return (
@@ -150,7 +152,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                                 <SelectItem value="progress">
                                     В процессе
                                 </SelectItem>
-                                <SelectItem value="finished">
+                                <SelectItem value="completed">
                                     Завершенные
                                 </SelectItem>
                             </SelectContent>
@@ -158,27 +160,27 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                     </div>
                     <div className="flex flex-col mt-3">
                         <ol>
-                            {toDoTasks.length > 0 ? (
+                            {toDoTasks.filter(
+                                (task) => task.status === statusFilter
+                            ).length > 0 ? (
                                 toDoTasks
                                     .filter(
                                         (task) => task.status === statusFilter
                                     )
-                                    .map((task) => {
-                                        return (
-                                            <React.Fragment key={task.name}>
-                                                <TodoListTask
-                                                    className="rounded-lg gap-2 p-2 m-2"
-                                                    name={task.name}
-                                                    description={
-                                                        task.description
-                                                    }
-                                                    order={task.order}
-                                                    time={task.time}
-                                                    status={task.status}
-                                                />
-                                            </React.Fragment>
-                                        );
-                                    })
+                                    .map((task) => (
+                                        <React.Fragment key={task.id}>
+                                            <TodoListTask
+                                                className="rounded-lg gap-2 p-2 m-2"
+                                                id={task.id}
+                                                name={task.name}
+                                                description={task.description}
+                                                time={task.time}
+                                                status={task.status}
+                                                updateTask={handleMoveTask}
+                                                deleteTask={handleDeleteTask}
+                                            />
+                                        </React.Fragment>
+                                    ))
                             ) : (
                                 <p className="text-center">Пока нет задач</p>
                             )}
@@ -193,7 +195,7 @@ export const TodoList: React.FC<Props> = ({ className }) => {
                 formName="todoform">
                 <ToDoForm
                     formName="todoform"
-                    addTask={handleAddTask}
+                    setTasks={setToDoTasks}
                 />
             </Modal>
         </div>
